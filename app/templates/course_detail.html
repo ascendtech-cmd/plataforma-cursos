@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }} - Detalhes do Curso</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
+        body { font-family: 'Roboto', sans-serif; margin: 0; padding: 0; background-color: #f0f2f5; color: #333; background: linear-gradient(-45deg, #e8eaf6, #e3f2fd, #e0f7fa, #f1f8e9); background-size: 400% 400%; animation: gradient 15s ease infinite; }
+        @keyframes gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; background-color: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); width: 100%; top: 0; left: 0; box-sizing: border-box; z-index: 100; }
+        .navbar .logo { max-width: 180px; }
+        .nav-links a { margin-left: 20px; text-decoration: none; color: #333; font-weight: bold; font-size: 16px; transition: color 0.3s ease; }
+        .nav-links a:hover { color: #007bff; }
+        .container { max-width: 900px; margin: 0 auto; padding: 120px 40px 40px 40px; z-index: 2; position: relative; }
+        .course-header { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); margin-bottom: 40px; }
+        .course-header h1 { font-size: 32px; color: #1c1e21; margin-top: 0; }
+        .course-header p { color: #555; line-height: 1.6; }
+        .enroll-status { font-weight: bold; color: #28a745; }
+        .btn-enroll { display: inline-block; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px; transition: all 0.3s ease; background-color: #007bff; color: white; border: none; cursor: pointer; }
+        .btn-enroll:hover { background-color: #0056b3; }
+        .access-box { background-color: #fff3cd; border: 1px solid #ffeeba; color: #856404; padding: 15px; border-radius: 8px; text-align: center; }
+        .content-title { text-align: center; font-size: 28px; color: #1c1e21; margin-bottom: 30px; }
+        .module-card { background: white; border-radius: 12px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); padding: 25px; margin-bottom: 25px; transition: all 0.3s ease; }
+        .module-card.locked { background-color: #f8f9fa; opacity: 0.6; box-shadow: 0 4px 10px rgba(0,0,0,0.04); }
+        .module-card h3 { display: flex; align-items: center; font-size: 20px; color: #1c1e21; margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .lock-icon { margin-right: 10px; }
+        .lesson-list { list-style: none; padding: 0; }
+        .lesson-list li { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
+        .lesson-list li:last-child { border-bottom: none; }
+        .lesson-list a { text-decoration: none; color: #007bff; font-weight: bold; }
+        .lesson-list a:hover { text-decoration: underline; }
+        .lesson-list .locked-lesson { color: #6c757d; font-weight: normal; }
+        .lesson-list .completed { color: #28a745; font-weight: bold; font-size: 14px; }
+        .quiz-section { margin-top: 20px; padding-top: 20px; border-top: 1px dashed #ccc; background-color: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .quiz-section a { text-decoration: none; font-weight: bold; color: #17a2b8; }
+        .quiz-section span { display: block; margin-top: 5px; font-size: 14px; color: #333; }
+        .certificate-box { text-align: center; padding: 20px; border-radius: 8px; margin-top: 20px; }
+        .certificate-box.eligible { background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .certificate-box.ineligible { background-color: #f8f9fa; border: 1px solid #dee2e6; color: #6c757d; }
+        .certificate-box a { color: #155724; font-weight: bold; text-decoration: none; border-bottom: 2px solid #155724; }
+        .bg-shapes { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .bg-shapes div { position: absolute; list-style: none; display: block; width: 40px; height: 40px; background-color: rgba(255, 255, 255, 0.2); bottom: -150px; animation: float 20s infinite; }
+    </style>
+</head>
+<body>
+    <div class="bg-shapes"><div></div></div>
+    <nav class="navbar">
+        <a href="{{ url_for('index') }}"><img src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,fit=crop/Yan9EZMjrOfO13GJ/funjab_rgb_2485x653-mnl9g2LppwI4kqao.jpg" alt="Logo da Fundação" class="logo"></a>
+        <div class="nav-links">
+            <a href="{{ url_for('courses') }}">Todos os Cursos</a>
+            
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('my_courses') }}">Meus Cursos</a>
+                <a href="{{ url_for('profile') }}">Meu Perfil</a>
+                
+                {% if current_user.is_admin %}
+                    <a href="{{ url_for('admin_dashboard') }}"><strong>Admin</strong></a>
+                {% endif %}
+                <a href="{{ url_for('logout') }}">Sair</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+                <a href="{{ url_for('register') }}">Cadastre-se</a>
+            {% endif %}
+        </div>
+    </nav>
+    <main class="container">
+        <div class="course-header">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul>
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% endwith %}
+            <h1>{{ course.title }}</h1>
+            <p>{{ course.description }}</p>
+            <hr>
+            
+            {% if current_user.is_authenticated %}
+                {% if enrollment %}
+                    <p class="enroll-status">✓ Você está matriculado neste curso.</p>
+                {% elif is_authorized %}
+                    <form action="{{ url_for('enroll', course_id=course.id) }}" method="post">
+                        <button type="submit" class="btn-enroll">Matricular-se neste curso</button>
+                    </form>
+                {% else %}
+                    <div class="access-box">
+                        <p>Você não tem permissão para se matricular neste curso.</p>
+                        <p>Por favor, solicite seu acesso enviando um e-mail para: <strong>administrativo@funjab.ufsc.br</strong></p>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="access-box">
+                    <p>
+                        <a href="{{ url_for('login', next=request.path) }}">Faça o login</a> para se matricular neste curso.
+                    </p>
+                </div>
+            {% endif %}
+
+            {% if enrollment %}
+            <div class="certificate-box {% if is_eligible_for_certificate %}eligible{% else %}ineligible{% endif %}">
+                {% if is_eligible_for_certificate %}
+                    <p><strong>Parabéns! Você concluiu todos os requisitos.</strong><br>
+                    <a href="{{ url_for('generate_certificate', course_id=course.id) }}" target="_blank">Gerar Certificado</a></p>
+                {% else %}
+                    <p>Conclua todas as lições e obtenha no mínimo 75% em todas as avaliações para liberar seu certificado.</p>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+        {% if enrollment %}
+        <h2 class="content-title">Conteúdo do Curso</h2>
+        <div class="modules-list">
+            {% for module_data in course_structure %}
+                <div class="module-card {% if module_data.is_locked %}locked{% endif %}">
+                    <h3>
+                        {% if module_data.is_locked %}<span class="lock-icon">🔒</span>{% endif %}
+                        {{ module_data.module.title }}
+                    </h3>
+                    <ul class="lesson-list">
+                        {% for lesson_data in module_data.lessons %}
+                            <li>
+                                {% if lesson_data.is_locked %}
+                                    <span class="locked-lesson"><span class="lock-icon">🔒</span>{{ lesson_data.lesson.title }}</span>
+                                {% else %}
+                                    <a href="{{ url_for('lesson_detail', lesson_id=lesson_data.lesson.id) }}">{{ lesson_data.lesson.title }}</a>
+                                {% endif %}
+                                
+                                {% if lesson_data.is_complete %}
+                                    <span class="completed">Concluído ✓</span>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    {% if module_data.module.quiz and not module_data.is_locked %}
+                    <div class="quiz-section">
+                        <a href="{{ url_for('quiz', quiz_id=module_data.module.quiz.id) }}">Fazer ou refazer Avaliação</a>
+                        {% if module_data.module.quiz.id in quiz_scores %}
+                            <span>Sua melhor nota: <strong>{{ quiz_scores[module_data.module.quiz.id] }}%</strong></span>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </main>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastre-se</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
+        body { font-family: 'Roboto', sans-serif; margin: 0; padding: 0; background-color: #f0f2f5; color: #333; background: linear-gradient(-45deg, #e8eaf6, #e3f2fd, #e0f7fa, #f1f8e9); background-size: 400% 400%; animation: gradient 15s ease infinite; overflow: auto; }
+        @keyframes gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .container { display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 40px 20px; }
+        .form-box { background: #ffffff; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); width: 100%; max-width: 500px; text-align: center; z-index: 2; }
+        .logo { max-width: 250px; margin-bottom: 20px; }
+        h1 { margin-bottom: 25px; color: #1c1e21; font-size: 28px; }
+        .form-box .form-group { margin-bottom: 15px; text-align: left; }
+        .form-row { display: flex; gap: 15px; } .form-row .form-group { flex: 1; }
+        .form-box label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+        input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="date"], select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px; font-family: 'Roboto', sans-serif; }
+        input[type="submit"] { width: 100%; padding: 12px; background-color: #007bff; border: none; border-radius: 6px; color: white; font-weight: bold; font-size: 16px; cursor: pointer; transition: background-color 0.3s ease; }
+        input[type="submit"]:hover { background-color: #0056b3; }
+        .error { color: #dc3545; font-size: 12px; margin-top: 4px; }
+        .home-link { margin-top: 20px; font-size: 14px; text-align: center; }
+        .home-link a { color: #6c757d; text-decoration: none; font-weight: bold; } .home-link a:hover { text-decoration: underline; }
+        .bg-shapes { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden;}
+        .bg-shapes div { position: absolute; list-style: none; display: block; width: 40px; height: 40px; background-color: rgba(255, 255, 255, 0.2); bottom: -150px; animation: float 20s infinite; }
+        .bg-shapes div:nth-child(1){left:10%;width:80px;height:80px;animation-delay:0s;} .bg-shapes div:nth-child(2){left:20%;width:30px;height:30px;animation-delay:1.5s;animation-duration:10s;} .bg-shapes div:nth-child(3){left:25%;width:50px;height:50px;animation-delay:5.5s;} .bg-shapes div:nth-child(4){left:40%;width:60px;height:60px;animation-delay:0s;animation-duration:15s;} .bg-shapes div:nth-child(5){left:65%;width:20px;height:20px;animation-delay:0s;} .bg-shapes div:nth-child(6){left:75%;width:110px;height:110px;animation-delay:3.5s;}
+    </style>
+</head>
+<body>
+    <div class="bg-shapes"><div></div><div></div><div></div><div></div><div></div><div></div></div>
+    <div class="container">
+        <div class="form-box">
+            <img src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,fit=crop/Yan9EZMjrOfO13GJ/funjab_rgb_2485x653-mnl9g2LppwI4kqao.jpg" alt="Logo da Fundação" class="logo">
+            <h1>Cadastre-se</h1>
+            <form action="" method="post" novalidate>
+                {{ form.hidden_tag() }}
+                <div class="form-group">{{ form.full_name.label }}<br>{{ form.full_name() }}{% for error in form.full_name.errors %}<span class="error">[{{ error }}]</span>{% endfor %}</div>
+                <div class="form-group">{{ form.email.label }}<br>{{ form.email() }}{% for error in form.email.errors %}<span class="error">[{{ error }}]</span>{% endfor %}</div>
+                <div class="form-row">
+                    <div class="form-group">{{ form.cpf.label }}<br>{{ form.cpf() }}{% for error in form.cpf.errors %}<span class="error">[{{ error }}]</span>{% endfor %}</div>
+                    <div class="form-group">{{ form.birth_date.label }}<br>{{ form.birth_date() }}{% for error in form.birth_date.errors %}<span class="error">[{{ error }}]</span>{% endfor %}</div>
+                </div>
+                <div class="form-group">{{ form.phone.label }}<br>{{ form.phone() }}{% for error in form.phone.errors %}<span class="error">[{{ error }}]</span>{% endfor %}</div>
+                <div class="form-row">
+                    <div class="form-group">{{ form.city.label }}<br>{{ form.city() }}{% for error in form.city.errors %}<span class="error">[{{ error }}]</span>{% endfor %}</div>
+                    <div class="form-group">{{ form.state.label }}<br>{{ form.state() }}{% for error in form.state.errors %}<span class="error">[{{ error }}]</span>{% endfor %}</div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">{{ form.gender.label }}<br>{{ form.gender() }}{% for error in form.gender.errors %}<span class="error">[{{ error }}]</span>{% endfor %}</div>
+                    <div class="form-group">{{ form.education_level.label }}<br>{{ form.education_level() }}{% for error in form.education_level.errors %}<span class="error">[{{ error }}]</span>{% endfor %}</div>
+                </div>
+                <div class="form-group">{{ form.password.label }}<br>{{ form.password() }}{% for error in form.password.errors %}<span class="error">[{{ error }}]</span>{% endfor %}</div>
+                <div class="form-group">{{ form.password2.label }}<br>{{ form.password2() }}{% for error in form.password2.errors %}<span class="error">[{{ error }}]</span>{% endfor %}</div>
+                <div class="form-group">{{ form.submit() }}</div>
+            </form>
+            <div class="home-link"><p><a href="{{ url_for('index') }}">Voltar para a página inicial</a></p></div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Certificado de Conclusão - {{ course_title }}</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
+        @page { size: A4 landscape; margin: 0; }
+        body {
+            font-family: 'Times New Roman', Times, serif; color: #333; margin: 0;
+            padding: 20mm; width: 297mm; height: 210mm; box-sizing: border-box;
+            display: flex; flex-direction: column; justify-content: space-between;
+            align-items: center; background-color: #fff; position: relative;
+            border: 15px solid #800000;
+        }
+        .corner-decorator {
+            position: absolute; width: 100px; height: 100px;
+            border-style: solid; border-color: #800000;
+        }
+        .corner-decorator.top-left { top: 25mm; left: 25mm; border-width: 5px 0 0 5px; }
+        .corner-decorator.top-right { top: 25mm; right: 25mm; border-width: 5px 5px 0 0; }
+        .corner-decorator.bottom-left { bottom: 25mm; left: 25mm; border-width: 0 0 5px 5px; }
+        .corner-decorator.bottom-right { bottom: 25mm; right: 25mm; border-width: 0 5px 5px 0; }
+        .logo { display: block; margin: 0 auto 20px auto; width: 250px; }
+        main {
+            text-align: center; flex-grow: 1; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; width: 100%;
+        }
+        .main-title { font-family: 'Times New Roman', Times, serif; font-size: 52pt; font-weight: bold; color: #111; margin: 0; }
+        .intro-text { font-size: 14pt; margin-top: 20px; }
+        .student-name { font-family: 'Dancing Script', cursive; font-size: 36pt; font-weight: 700; color: #800000; margin: 20px 0; }
+        .course-details { font-size: 12pt; line-height: 1.5; }
+        footer { width: 100%; text-align: center; }
+        .location-date { font-size: 11pt; margin-bottom: 30px; }
+        .signature-block { display: inline-block; text-align: center; }
+        /* NOVO ESTILO PARA O CÓDIGO DE VERIFICAÇÃO */
+        .verification-code {
+            margin-bottom: 5px;
+            font-size: 10pt;
+            color: #555;
+        }
+        .signature-name { font-size: 14pt; font-weight: bold; border-top: 1px solid #555; padding-top: 5px; }
+        .signature-title { font-size: 10pt; }
+    </style>
+</head>
+<body>
+    <div class="corner-decorator top-left"></div>
+    <div class="corner-decorator top-right"></div>
+    <div class="corner-decorator bottom-left"></div>
+    <div class="corner-decorator bottom-right"></div>
+    <main>
+        <img src="{{ logo_url }}" alt="Logo da Fundação" class="logo">
+        <h1 class="main-title">Certificado</h1>
+        <p class="intro-text">Certificamos, para os devidos fins, que o aluno</p>
+        <p class="student-name">{{ student_name }}</p>
+        <p class="course-details">
+            inscrito no CPF {{ student_cpf }}, concluiu o Curso de Capacitação de {{ course_title }},
+            <br>
+            concedido pela Fundação José Arthur Boiteux, com carga horária de {{ course_load }} horas/aula.
+        </p>
+    </main>
+    <footer>
+        <p class="location-date">Florianópolis/SC, {{ completion_date }}</p>
+        <div class="signature-block">
+            <p class="verification-code">Assinado digitalmente. Código {{ verification_code }}</p>
+            <p class="signature-name">Orides Mezzaroba</p>
+            <p class="signature-title">Presidente - FUNJAB</p>
+        </div>
+    </footer>
+</body>
+</html>

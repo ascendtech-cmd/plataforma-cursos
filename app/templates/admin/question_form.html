@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        body { font-family: 'Roboto', sans-serif; background-color: #f0f2f5; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 20px auto; padding: 30px; background: white; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+        h1 { font-size: 28px; color: #1c1e21; text-align: center; margin-bottom: 30px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 14px; }
+        input[type="text"], textarea {
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px;
+            box-sizing: border-box; font-size: 16px; font-family: 'Roboto', sans-serif;
+        }
+        textarea { resize: vertical; min-height: 100px; }
+        .choices-group label { font-weight: normal; }
+        .choices-group input[type="radio"] { margin-right: 8px; }
+        .btn {
+            display: inline-block; padding: 12px 25px; border-radius: 6px; text-decoration: none;
+            font-weight: bold; font-size: 16px; background-color: #28a745; color: white;
+            border: none; cursor: pointer; transition: background-color 0.3s ease;
+        }
+        .btn:hover { background-color: #218838; }
+        .back-link { display: block; text-align: center; margin-top: 20px; color: #6c757d; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Editar Pergunta</h1>
+        <form action="" method="post" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.text.label }}<br>
+                {{ form.text() }}
+            </div>
+            <hr>
+            <div class="form-group">
+                {{ form.choice1_text.label }}<br>
+                {{ form.choice1_text() }}
+            </div>
+            <div class="form-group">
+                {{ form.choice2_text.label }}<br>
+                {{ form.choice2_text() }}
+            </div>
+            <div class="form-group">
+                {{ form.choice3_text.label }}<br>
+                {{ form.choice3_text() }}
+            </div>
+            <hr>
+            <div class="form-group choices-group">
+                <label><strong>{{ form.correct_choice.label }}</strong></label>
+                {% for subfield in form.correct_choice %}
+                    <div>{{ subfield }} {{ subfield.label }}</div>
+                {% endfor %}
+            </div>
+            <div class="form-group">
+                {{ form.submit(class="btn") }}
+            </div>
+        </form>
+        <a href="{{ url_for('manage_quiz', module_id=question.quiz.module_id) }}" class="back-link">Cancelar e voltar</a>
+    </div>
+</body>
+</html>

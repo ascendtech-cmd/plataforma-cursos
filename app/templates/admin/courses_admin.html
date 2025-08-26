@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        body { font-family: 'Roboto', sans-serif; margin: 0; padding: 0; background-color: #f0f2f5; color: #333; }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; background-color: white; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); }
+        .navbar .logo { max-width: 180px; }
+        .nav-links a { margin-left: 20px; text-decoration: none; color: #333; font-weight: bold; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 40px; }
+        .admin-panel { background: white; border-radius: 12px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); padding: 30px 40px; }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 20px; margin-bottom: 20px; }
+        .panel-header h1 { font-size: 28px; color: #1c1e21; margin: 0; }
+        .btn { display: inline-block; padding: 10px 20px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px; background-color: #007bff; color: white; }
+        .btn:hover { background-color: #0056b3; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid #ddd; }
+        th { background-color: #f8f9fa; }
+        .actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .actions a, .actions button { text-decoration: none; font-weight: bold; font-size: 14px; }
+        .actions .manage-link { color: #17a2b8; }
+        .actions .edit-link { color: #28a745; }
+        .delete-form button { background: none; border: none; padding: 0; font-family: 'Roboto', sans-serif; color: #dc3545; cursor: pointer; }
+        /* ESTILOS PARA PAGINAÇÃO */
+        .pagination { margin-top: 30px; text-align: center; }
+        .pagination a {
+            color: #007bff; text-decoration: none; padding: 8px 16px;
+            margin: 0 4px; border: 1px solid #dee2e6; border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+        .pagination a:hover { background-color: #e9ecef; }
+        .pagination .active a { background-color: #007bff; color: white; border-color: #007bff; }
+        .pagination .disabled span {
+            color: #6c757d; padding: 8px 16px;
+            margin: 0 4px; border: 1px solid #dee2e6; border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="{{ url_for('index') }}"><img src="{{ url_for('static', filename='images/logo_funjab.jpg') }}" alt="Logo da Fundação" class="logo"></a>
+        <div class="nav-links">
+            <a href="{{ url_for('admin_dashboard') }}">Painel Principal</a>
+            <a href="{{ url_for('logout') }}">Sair</a>
+        </div>
+    </nav>
+    <main class="container">
+        <div class="admin-panel">
+            <div class="panel-header">
+                <h1>Gerenciamento de Cursos</h1>
+                <a href="{{ url_for('add_course') }}" class="btn">Adicionar Novo Curso</a>
+            </div>
+            
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul style="background-color: #d4edda; border: 1px solid #c3e6cb; padding: 10px; border-radius: 6px;">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+            {% endwith %}
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Título</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for course in courses.items %}
+                    <tr>
+                        <td>{{ course.id }}</td>
+                        <td>{{ course.title }}</td>
+                        <td class="actions">
+                            <a href="{{ url_for('manage_course', course_id=course.id) }}" class="manage-link">Gerenciar Conteúdo</a>
+                            <a href="{{ url_for('edit_course', course_id=course.id) }}" class="edit-link">Editar</a>
+                            <form action="{{ url_for('delete_course', course_id=course.id) }}" method="post"
+                                  onsubmit="return confirm('Tem certeza que deseja remover este curso? Esta ação não pode ser desfeita.');">
+                                <button type="submit">Remover</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="3">Nenhum curso encontrado. Adicione o primeiro!</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                {% if courses.has_prev %}
+                    <a href="{{ url_for('manage_courses', page=courses.prev_num) }}">&laquo; Anterior</a>
+                {% else %}
+                    <span class="disabled"><span>&laquo; Anterior</span></span>
+                {% endif %}
+
+                {% for page_num in courses.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                    {% if page_num %}
+                        {% if courses.page == page_num %}
+                            <span class="active"><a href="{{ url_for('manage_courses', page=page_num) }}">{{ page_num }}</a></span>
+                        {% else %}
+                            <a href="{{ url_for('manage_courses', page=page_num) }}">{{ page_num }}</a>
+                        {% endif %}
+                    {% else %}
+                        ...
+                    {% endif %}
+                {% endfor %}
+
+                {% if courses.has_next %}
+                    <a href="{{ url_for('manage_courses', page=courses.next_num) }}">Próxima &raquo;</a>
+                {% else %}
+                    <span class="disabled"><span>Próxima &raquo;</span></span>
+                {% endif %}
+            </div>
+
+        </div>
+    </main>
+</body>
+</html>

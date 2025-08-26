@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
+        body { font-family: 'Roboto', sans-serif; margin: 0; padding: 0; background-color: #f0f2f5; color: #333; background: linear-gradient(-45deg, #e8eaf6, #e3f2fd, #e0f7fa, #f1f8e9); background-size: 400% 400%; animation: gradient 15s ease infinite; }
+        @keyframes gradient { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; background-color: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); width: 100%; top: 0; left: 0; box-sizing: border-box; z-index: 100; }
+        .navbar .logo { max-width: 180px; }
+        .nav-links a { margin-left: 20px; text-decoration: none; color: #333; font-weight: bold; font-size: 16px; transition: color 0.3s ease; }
+        .nav-links a:hover { color: #007bff; }
+        .container { max-width: 900px; margin: 0 auto; padding: 120px 40px 40px 40px; z-index: 2; position: relative; }
+        .lesson-card { background: white; border-radius: 12px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08); padding: 30px 40px; }
+        .lesson-header { border-bottom: 1px solid #eee; padding-bottom: 20px; margin-bottom: 20px; }
+        .lesson-header h1 { font-size: 28px; color: #1c1e21; margin: 10px 0 0 0; }
+        .lesson-header a { color: #6c757d; text-decoration: none; font-size: 14px; }
+        .lesson-header a:hover { text-decoration: underline; }
+        .lesson-content { line-height: 1.7; font-size: 16px; color: #333; }
+        .lesson-content img { max-width: 100%; height: auto; border-radius: 8px; margin: 15px 0; }
+        .lesson-content iframe { max-width: 100%; border-radius: 8px; margin: 15px 0; aspect-ratio: 16 / 9; width: 100%; height: auto; }
+        .attachments-section, .response-section, .completion-section { margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; }
+        .attachments-section h3, .response-section h3 { font-size: 18px; color: #333; margin-bottom: 15px; }
+        .attachments-section ul { list-style: none; padding: 0; }
+        .attachments-section li { margin-bottom: 10px; }
+        .attachments-section a { text-decoration: none; color: #007bff; font-weight: bold; background-color: #f8f9fa; padding: 8px 12px; border-radius: 6px; display: inline-block; transition: background-color 0.3s ease; }
+        .attachments-section a:hover { background-color: #e2e6ea; }
+        .completion-section { text-align: center; }
+        .completion-section .completed-message { background-color: #d4edda; color: #155724; padding: 15px; border-radius: 8px; font-weight: bold; }
+        .btn { display: inline-block; padding: 12px 25px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 16px; transition: all 0.3s ease; border: none; cursor: pointer; background-color: #28a745; color: white; }
+        .btn:hover { background-color: #218838; transform: translateY(-2px); }
+        .response-section textarea { width: 100%; min-height: 100px; padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-family: 'Roboto', sans-serif; font-size: 16px; box-sizing: border-box; }
+        .response-section .saved-response { background-color: #e9ecef; padding: 15px; border-radius: 6px; }
+        .bg-shapes { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .bg-shapes div { position: absolute; list-style: none; display: block; width: 40px; height: 40px; background-color: rgba(255, 255, 255, 0.2); bottom: -150px; animation: float 20s infinite; }
+    </style>
+</head>
+<body>
+    <div class="bg-shapes"><div></div></div>
+    <nav class="navbar">
+        <a href="{{ url_for('index') }}"><img src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,fit=crop/Yan9EZMjrOfO13GJ/funjab_rgb_2485x653-mnl9g2LppwI4kqao.jpg" alt="Logo da Fundação" class="logo"></a>
+        <div class="nav-links">
+            <a href="{{ url_for('courses') }}">Todos os Cursos</a>
+            
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('my_courses') }}">Meus Cursos</a>
+                <a href="{{ url_for('profile') }}">Meu Perfil</a>
+                
+                {% if current_user.is_admin %}
+                    <a href="{{ url_for('admin_dashboard') }}"><strong>Admin</strong></a>
+                {% endif %}
+                <a href="{{ url_for('logout') }}">Sair</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+                <a href="{{ url_for('register') }}">Cadastre-se</a>
+            {% endif %}
+        </div>
+    </nav>
+    <main class="container">
+        <div class="lesson-card">
+            <div class="lesson-header">
+                <a href="{{ url_for('course_detail', course_id=lesson.module.course_id) }}">← Voltar para o curso</a>
+                <h1>{{ lesson.title }}</h1>
+            </div>
+            <div class="lesson-content">{{ html_content | safe }}</div>
+
+            {% if lesson.has_response_field %}
+            <div class="response-section">
+                {% if existing_response %}
+                    <div class="saved-response">
+                        <p><strong>Sua resposta enviada em {{ existing_response.response_date.strftime('%d/%m/%Y') }}:</strong></p>
+                        <p><em>{{ existing_response.response_text }}</em></p>
+                    </div>
+                {% else %}
+                    <h3>Sua vez de interagir!</h3>
+                    <form action="{{ url_for('submit_response', lesson_id=lesson.id) }}" method="post" novalidate>
+                        {{ response_form.hidden_tag() }}
+                        <p>{{ response_form.response_text.label }}<br>{{ response_form.response_text(rows=4) }}</p>
+                        <p>{{ response_form.submit(class="btn") }}</p>
+                    </form>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {% if lesson.attachments.all() %}
+                <div class="attachments-section">
+                    <h3>Materiais de Apoio</h3>
+                    <ul>
+                        {% for attachment in lesson.attachments %}
+                            <li>
+                                {% if attachment.attachment_type == 'link' %}
+                                    <a href="{{ attachment.url_or_filename }}" target="_blank" rel="noopener noreferrer">{{ attachment.display_name }}</a>
+                                {% else %}
+                                    <a href="{{ url_for('uploaded_file', filename=attachment.url_or_filename) }}" target="_blank">{{ attachment.display_name }}</a>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            <div class="completion-section">
+                {% if completion %}
+                    <p class="completed-message">✓ Você concluiu esta lição.</p>
+                {% else %}
+                    <form action="{{ url_for('complete_lesson', lesson_id=lesson.id) }}" method="post">
+                        <button type="submit" class="btn">Marcar como Concluída</button>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+</body>
+</html>
